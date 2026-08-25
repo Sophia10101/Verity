@@ -3,9 +3,10 @@ import Link from "next/link";
 export default function LandingPage() {
   return (
     <div className="flex flex-1 flex-col items-center px-4 pt-28 pb-24 text-center">
-      <h1 className="max-w-xl font-display text-4xl font-extrabold tracking-tight text-balance sm:text-5xl">
-        Your biggest risk isn&apos;t the market. It&apos;s{" "}
-        <span className="text-accent">how you&apos;ll react to it</span>.
+      <h1 className="max-w-3xl font-display text-4xl font-extrabold tracking-tight sm:text-5xl">
+        Your biggest risk isn&apos;t the market.
+        <br />
+        It&apos;s <span className="text-accent">how you&apos;ll react to it</span>.
       </h1>
       <p className="mt-6 max-w-xl text-base leading-relaxed text-muted">
         It&apos;s called the behavior gap: decades of research from DALBAR and
