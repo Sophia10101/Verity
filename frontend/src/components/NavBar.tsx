@@ -10,7 +10,7 @@ export async function NavBar() {
 
   return (
     <header className="border-b border-border">
-      <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4">
+      <div className="flex items-center justify-between px-6 py-4 sm:px-10">
         <Link href="/" className="font-display text-sm font-extrabold tracking-tight">
           Verity
         </Link>
