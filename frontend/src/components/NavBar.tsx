@@ -9,9 +9,9 @@ export async function NavBar() {
   } = await supabase.auth.getUser();
 
   return (
-    <header className="border-b border-black/10 dark:border-white/10">
+    <header className="border-b border-border">
       <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4">
-        <Link href="/" className="text-sm font-semibold tracking-tight">
+        <Link href="/" className="font-display text-sm font-extrabold tracking-tight">
           Verity
         </Link>
 
@@ -42,7 +42,7 @@ export async function NavBar() {
               </Link>
               <Link
                 href="/signup"
-                className="rounded-md bg-foreground px-3 py-1.5 text-sm font-medium text-background"
+                className="rounded-md bg-accent px-3 py-1.5 text-sm font-semibold text-accent-foreground"
               >
                 Sign up
               </Link>
