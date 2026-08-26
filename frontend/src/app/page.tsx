@@ -3,12 +3,12 @@ import Link from "next/link";
 export default function LandingPage() {
   return (
     <div className="flex flex-1 flex-col items-center px-4 pt-28 pb-24 text-center">
-      <h1 className="max-w-3xl font-display text-4xl font-extrabold tracking-tight sm:text-5xl">
-        Your biggest risk isn&apos;t the market.
+      <h1 className="max-w-4xl font-display text-4xl font-extrabold tracking-tight sm:text-5xl">
+        Your biggest risk isn&apos;t the market. It&apos;s
         <br />
-        It&apos;s <span className="text-accent">how you&apos;ll react to it</span>.
+        <span className="text-accent">how you&apos;ll react to it</span>.
       </h1>
-      <p className="mt-6 max-w-xl text-base leading-relaxed text-muted">
+      <p className="mt-6 max-w-3xl text-base leading-relaxed text-muted">
         It&apos;s called the behavior gap: decades of research from DALBAR and
         Morningstar show investors consistently earn less than the funds
         they&apos;re invested in, not from bad picks, but from panic-selling
