@@ -12,9 +12,9 @@ def score_behavioral(raw_answers: dict[str, int]) -> tuple[float, float]:
     mean = sum(values) / len(values)
     behavioral_score = round((mean - 1) / 4 * 100, 1)
 
-    # Loss-aversion probe items (q3, q4, q6, q7 in the placeholder
-    # questionnaire) — falls back to the overall mean if absent.
-    loss_aversion_ids = ["q3", "q4", "q6", "q7"]
+    # Loss-aversion probe items (q13, q14, q16, q17 in the placeholder
+    # questionnaire): falls back to the overall mean if absent.
+    loss_aversion_ids = ["q13", "q14", "q16", "q17"]
     loss_values = [raw_answers[q] for q in loss_aversion_ids if q in raw_answers]
     loss_mean = sum(loss_values) / len(loss_values) if loss_values else mean
     loss_aversion_score = round((loss_mean - 1) / 4 * 100, 1)
