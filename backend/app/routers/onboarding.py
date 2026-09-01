@@ -22,7 +22,9 @@ def _run_pipeline(payload: OnboardingSubmitRequest) -> OnboardingSubmitResponse:
         capacity_score, behavioral_score, loss_aversion_score
     )
 
-    portfolio = build_portfolio(reconciled_score)
+    portfolio = build_portfolio(
+        reconciled_score, payload.financial_profile.industry_interests
+    )
 
     goal_amount = midpoint_for(
         GOAL_AMOUNT_BUCKETS, payload.financial_profile.goal_amount_range
