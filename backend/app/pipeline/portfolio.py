@@ -25,22 +25,29 @@
 #    reconciled_score onto a target volatility between them, and solve for
 #    the exact efficient-frontier portfolio at that risk level.
 #
-# Historical prices are fetched once per process (not per-request) and
-# cached at module level; PyPortfolioOpt/yfinance failures fall back to a
-# small static lookup table so the endpoint still responds.
+# Historical prices come from a bundled CSV (app/data/market_prices.csv),
+# not a live fetch: Yahoo Finance's undocumented API, which yfinance relies
+# on, rate-limits or blocks requests from cloud/datacenter IPs like Render's,
+# even though it works fine from a normal connection. Run
+# scripts/refresh_market_data.py locally to update the bundled file.
+# Loaded once per process at import time and cached at module level;
+# a missing/unreadable file falls back to a small static lookup table so
+# the endpoint still responds.
 
 from __future__ import annotations
 
 import logging
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
-import yfinance as yf
 from pypfopt import EfficientFrontier, expected_returns, risk_models
 
 from app.schemas import Portfolio
 
 logger = logging.getLogger(__name__)
+
+MARKET_DATA_PATH = Path(__file__).resolve().parent.parent / "data" / "market_prices.csv"
 
 FUND_TICKERS = ["VTI", "VOO", "VXUS", "VB", "BND", "VNQ", "GLD"]
 
@@ -83,22 +90,25 @@ FOUNDATION_WEIGHT_BOUNDS = (0.05, 0.60)
 SATELLITE_WEIGHT_BOUNDS = (0.05, 0.15)
 
 
-def _fetch_market_data() -> tuple[pd.Series, pd.DataFrame]:
-    prices = yf.download(
-        ALL_TICKERS, period=LOOKBACK, auto_adjust=True, progress=False
-    )["Close"]
-    prices = prices.dropna(axis=0, how="any")
+def _load_market_data() -> tuple[pd.Series, pd.DataFrame]:
+    prices = pd.read_csv(MARKET_DATA_PATH, index_col=0, parse_dates=True)
+    missing = set(ALL_TICKERS) - set(prices.columns)
+    if missing:
+        raise ValueError(f"market_prices.csv is missing tickers: {sorted(missing)}")
+
     mu = expected_returns.mean_historical_return(prices)
     cov = risk_models.CovarianceShrinkage(prices).ledoit_wolf()
     return mu, cov
 
 
 try:
-    MU, COV = _fetch_market_data()
+    MU, COV = _load_market_data()
 except Exception:
     logger.exception(
-        "Failed to fetch market data from yfinance; build_portfolio will use "
-        "the static fallback until the process restarts."
+        "Failed to load %s; build_portfolio will use the static fallback "
+        "until the process restarts. Run scripts/refresh_market_data.py "
+        "to (re)generate it.",
+        MARKET_DATA_PATH,
     )
     MU, COV = None, None
 
