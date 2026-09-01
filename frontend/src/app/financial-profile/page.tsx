@@ -8,6 +8,7 @@ import {
   GOAL_AMOUNT_BUCKETS,
   GOAL_TIMEFRAME_BUCKETS,
   INCOME_BUCKETS,
+  INDUSTRY_OPTIONS,
   midpointFor,
 } from "@/lib/buckets";
 
@@ -15,6 +16,22 @@ export default function FinancialProfilePage() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+  const [industries, setIndustries] = useState<string[]>([]);
+  const [openToAnything, setOpenToAnything] = useState(false);
+
+  function toggleIndustry(industry: string) {
+    setIndustries((prev) =>
+      prev.includes(industry) ? prev.filter((i) => i !== industry) : [...prev, industry],
+    );
+  }
+
+  function toggleOpenToAnything() {
+    setOpenToAnything((prev) => {
+      const next = !prev;
+      if (next) setIndustries([]);
+      return next;
+    });
+  }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -52,6 +69,7 @@ export default function FinancialProfilePage() {
         goal_timeframe_range,
       ),
       experience_level,
+      industry_interests: industries,
     });
 
     setPending(false);
@@ -155,12 +173,40 @@ export default function FinancialProfilePage() {
           </div>
         </fieldset>
 
+        <fieldset>
+          <legend className="block text-sm font-medium">
+            Which industries do you know well or want represented in your
+            portfolio?
+          </legend>
+          <div className="mt-2 space-y-2">
+            {INDUSTRY_OPTIONS.map((industry) => (
+              <label key={industry} className="flex items-center gap-2 text-sm">
+                <input
+                  type="checkbox"
+                  checked={industries.includes(industry)}
+                  disabled={openToAnything}
+                  onChange={() => toggleIndustry(industry)}
+                />
+                {industry}
+              </label>
+            ))}
+            <label className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={openToAnything}
+                onChange={toggleOpenToAnything}
+              />
+              I&apos;m open to anything
+            </label>
+          </div>
+        </fieldset>
+
         {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
 
         <button
           type="submit"
           disabled={pending}
-          className="w-full rounded-md bg-foreground px-3 py-2 text-sm font-medium text-background disabled:opacity-60"
+          className="w-full rounded-md bg-accent px-3 py-2 text-sm font-medium text-accent-foreground disabled:opacity-60"
         >
           {pending ? "Saving…" : "Continue to questionnaire"}
         </button>

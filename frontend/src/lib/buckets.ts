@@ -35,6 +35,19 @@ export const EXPERIENCE_LEVELS = [
   { label: "Experienced", value: "experienced" },
 ] as const;
 
+// Maps to the sector tags on the individual stocks in the portfolio
+// optimizer's asset universe. Used to pick which stocks to consider for a
+// given user; an empty selection means "open to anything."
+export const INDUSTRY_OPTIONS = [
+  "Technology",
+  "Healthcare",
+  "Financials",
+  "Energy",
+  "Consumer / Retail",
+  "Communication / Media",
+  "Utilities",
+] as const;
+
 export function midpointFor(buckets: BucketOption[], label: string): number {
   const match = buckets.find((b) => b.label === label);
   if (!match) {

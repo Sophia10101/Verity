@@ -28,6 +28,7 @@ create table if not exists public.financial_profiles (
   goal_timeframe_range text not null,
   estimated_time_horizon_years int not null,
   experience_level text not null check (experience_level in ('none', 'some', 'experienced')),
+  industry_interests jsonb not null default '[]'::jsonb,
   created_at timestamptz not null default now()
 );
 

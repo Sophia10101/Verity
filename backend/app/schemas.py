@@ -7,6 +7,7 @@ class FinancialProfile(BaseModel):
     goal_amount_range: str
     goal_timeframe_range: str
     experience_level: str
+    industry_interests: list[str] = []
 
 
 class OnboardingSubmitRequest(BaseModel):
