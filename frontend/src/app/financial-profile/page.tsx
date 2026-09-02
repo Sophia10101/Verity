@@ -9,6 +9,9 @@ import {
   GOAL_TIMEFRAME_BUCKETS,
   INCOME_BUCKETS,
   INDUSTRY_OPTIONS,
+  MONTHLY_CONTRIBUTION_BUCKETS,
+  NO_MONTHLY_GOAL,
+  estimateMonthlyContributionFromIncome,
   midpointFor,
 } from "@/lib/buckets";
 
@@ -44,6 +47,11 @@ export default function FinancialProfilePage() {
     const goal_amount_range = String(formData.get("goal_amount_range"));
     const goal_timeframe_range = String(formData.get("goal_timeframe_range"));
     const experience_level = String(formData.get("experience_level"));
+    const monthly_contribution_choice = String(
+      formData.get("monthly_contribution_range"),
+    );
+    const has_monthly_goal = monthly_contribution_choice !== NO_MONTHLY_GOAL;
+    const estimated_annual_income = midpointFor(INCOME_BUCKETS, income_range);
 
     const supabase = createClient();
     const {
@@ -60,7 +68,7 @@ export default function FinancialProfilePage() {
       user_id: user.id,
       age,
       income_range,
-      estimated_annual_income: midpointFor(INCOME_BUCKETS, income_range),
+      estimated_annual_income,
       goal_amount_range,
       estimated_goal_amount: midpointFor(GOAL_AMOUNT_BUCKETS, goal_amount_range),
       goal_timeframe_range,
@@ -70,6 +78,12 @@ export default function FinancialProfilePage() {
       ),
       experience_level,
       industry_interests: industries,
+      monthly_contribution_range: has_monthly_goal
+        ? monthly_contribution_choice
+        : null,
+      estimated_monthly_contribution: has_monthly_goal
+        ? midpointFor(MONTHLY_CONTRIBUTION_BUCKETS, monthly_contribution_choice)
+        : estimateMonthlyContributionFromIncome(estimated_annual_income),
     });
 
     setPending(false);
@@ -153,6 +167,34 @@ export default function FinancialProfilePage() {
                 {bucket.label}
               </label>
             ))}
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend className="block text-sm font-medium">
+            How much can you invest monthly?
+          </legend>
+          <div className="mt-2 space-y-2">
+            {MONTHLY_CONTRIBUTION_BUCKETS.map((bucket) => (
+              <label key={bucket.label} className="flex items-center gap-2 text-sm">
+                <input
+                  type="radio"
+                  name="monthly_contribution_range"
+                  value={bucket.label}
+                  required
+                />
+                {bucket.label}
+              </label>
+            ))}
+            <label className="flex items-center gap-2 text-sm">
+              <input
+                type="radio"
+                name="monthly_contribution_range"
+                value={NO_MONTHLY_GOAL}
+                required
+              />
+              I don&apos;t have a monthly goal
+            </label>
           </div>
         </fieldset>
 

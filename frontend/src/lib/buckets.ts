@@ -29,6 +29,32 @@ export const GOAL_TIMEFRAME_BUCKETS: BucketOption[] = [
   { label: "20+ years", value: 25 },
 ];
 
+export const MONTHLY_CONTRIBUTION_BUCKETS: BucketOption[] = [
+  { label: "$0 – $100", value: 50 },
+  { label: "$100 – $250", value: 175 },
+  { label: "$250 – $500", value: 375 },
+  { label: "$500 – $1,000", value: 750 },
+  { label: "$1,000 – $2,500", value: 1750 },
+  { label: "$2,500 – $5,000", value: 3750 },
+  { label: "$5,000 – $10,000", value: 7500 },
+  { label: "$10,000+", value: 12500 },
+];
+
+// Sentinel radio value for "I don't have a monthly goal." When selected,
+// monthly_contribution_range is stored as null and estimated_monthly_contribution
+// is derived from income instead (see estimateMonthlyContributionFromIncome).
+export const NO_MONTHLY_GOAL = "no_monthly_goal";
+
+// Common savings-rate benchmark used to derive a monthly contribution when
+// the user has no specific monthly goal in mind.
+const DEFAULT_SAVINGS_RATE = 0.15;
+
+export function estimateMonthlyContributionFromIncome(
+  estimatedAnnualIncome: number,
+): number {
+  return (estimatedAnnualIncome * DEFAULT_SAVINGS_RATE) / 12;
+}
+
 export const EXPERIENCE_LEVELS = [
   { label: "None", value: "none" },
   { label: "Some", value: "some" },

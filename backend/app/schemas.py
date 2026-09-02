@@ -8,6 +8,7 @@ class FinancialProfile(BaseModel):
     goal_timeframe_range: str
     experience_level: str
     industry_interests: list[str] = []
+    monthly_contribution_range: str | None = None
 
 
 class OnboardingSubmitRequest(BaseModel):

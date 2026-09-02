@@ -1,6 +1,13 @@
 from fastapi import APIRouter
 
-from app.buckets import GOAL_AMOUNT_BUCKETS, GOAL_TIMEFRAME_BUCKETS, midpoint_for
+from app.buckets import (
+    GOAL_AMOUNT_BUCKETS,
+    GOAL_TIMEFRAME_BUCKETS,
+    INCOME_BUCKETS,
+    MONTHLY_CONTRIBUTION_BUCKETS,
+    estimate_monthly_contribution_from_income,
+    midpoint_for,
+)
 from app.pipeline.behavioral import score_behavioral
 from app.pipeline.capacity import score_capacity
 from app.pipeline.portfolio import build_portfolio
@@ -34,7 +41,26 @@ def _run_pipeline(payload: OnboardingSubmitRequest) -> OnboardingSubmitResponse:
             GOAL_TIMEFRAME_BUCKETS, payload.financial_profile.goal_timeframe_range
         )
     )
-    simulation = simulate(portfolio, goal_amount, time_horizon_years, loss_aversion_score)
+    monthly_contribution_range = payload.financial_profile.monthly_contribution_range
+    if monthly_contribution_range:
+        monthly_contribution = midpoint_for(
+            MONTHLY_CONTRIBUTION_BUCKETS, monthly_contribution_range
+        )
+    else:
+        estimated_annual_income = midpoint_for(
+            INCOME_BUCKETS, payload.financial_profile.income_range
+        )
+        monthly_contribution = estimate_monthly_contribution_from_income(
+            estimated_annual_income
+        )
+
+    simulation = simulate(
+        portfolio,
+        goal_amount,
+        time_horizon_years,
+        loss_aversion_score,
+        monthly_contribution,
+    )
 
     # TODO (Phase 3 Step 16): persist risk_scores/portfolios/simulation_results
     # to Supabase here using the service-role key, instead of only returning
